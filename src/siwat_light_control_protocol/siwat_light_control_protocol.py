@@ -1,3 +1,4 @@
+import sys
 from time import sleep
 import serial
 from threading import Thread
@@ -74,6 +75,8 @@ class siwat_light_control_protocol:
         for i in range(sum(self.led_map)):
             self.set_led_at(i,r,g,b)
         self.show()
+    def is_connected(self) -> bool:
+        return self.serial_adapter.isOpen()
     def fill_segment_with_color(self, segment_start: int, segment_stop: int, r: int, g: int, b: int):
         # TODO Input Validation, 0<index<num_leds
         for index in range(segment_start,segment_stop+1):

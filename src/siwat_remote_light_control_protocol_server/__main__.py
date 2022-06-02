@@ -42,7 +42,7 @@ if MQTT_USE_AUTH:
     mqttclient.username_pw_set(username=MQTT_USERNAME, password=MQTT_PASSWORD)
 
 
-def keep_mqtt_alive():
+def keep_alive():
     while True:
         if not mqttclient.is_connected():
             print("connecting to mqtt. . .")
@@ -53,6 +53,8 @@ def keep_mqtt_alive():
                 print("mqtt reconnected!")
                 print("resubscribing to topics")
                 mqttclient.subscribe(MQTT_BASE_TOPIC+"/control/#")
+        if not led.is_connected():
+            sys.exit(16)
         sleep(15)
 
 while not mqttclient.is_connected():
@@ -68,7 +70,7 @@ mqttclient.subscribe(MQTT_BASE_TOPIC+"/control/#")
 
 print("keeping connection alive!")
 
-threading.Thread(target=keep_mqtt_alive).start()
+threading.Thread(target=keep_alive).start()
 
 def report_state():
     global state, r, g, b, brightness, effect, effector, led, effects_list

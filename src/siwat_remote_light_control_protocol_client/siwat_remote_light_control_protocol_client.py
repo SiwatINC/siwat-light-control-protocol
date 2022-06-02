@@ -82,4 +82,3 @@ class siwat_remote_light_control_protocol_client:
         # TODO Input Validation, 0<index<num_leds
         for index in range(segment_start,segment_stop+1):
             self.set_led_at(index,r,g,b)
-        pass
