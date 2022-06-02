@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='siwat_light_control_protocol',
-    version='2.0',
+    version='2.1',
     license='Apache 2.0',
     author="Siwat Sirichai",
     author_email='siwat@siwatinc.com',
@@ -12,6 +12,7 @@ setup(
     keywords='light mqtt serial raspberry-pi-pico',
     install_requires=[
           'pyserial',
+          'paho-mqtt'
       ],
 
 )
