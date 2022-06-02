@@ -1,0 +1,8 @@
+LICENSE
+README.md
+setup.py
+src/siwat_light_control_protocol.egg-info/PKG-INFO
+src/siwat_light_control_protocol.egg-info/SOURCES.txt
+src/siwat_light_control_protocol.egg-info/dependency_links.txt
+src/siwat_light_control_protocol.egg-info/requires.txt
+src/siwat_light_control_protocol.egg-info/top_level.txt
