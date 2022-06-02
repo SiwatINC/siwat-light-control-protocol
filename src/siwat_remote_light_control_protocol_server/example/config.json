@@ -1,0 +1,14 @@
+{
+    "MQTT_SERVER": "",
+    "MQTT_USE_AUTH": false,
+    "MQTT_USERNAME": "",
+    "MQTT_PASSWORD": "",
+    "MQTT_BASE_TOPIC": "/ledstrip/fixture1",
+    "FRAME_TIME": 100.0,
+    "SERIAL_PORTS_MAP": [
+        "COM1"
+    ],
+    "LED_MAP": [
+        60
+    ]
+}

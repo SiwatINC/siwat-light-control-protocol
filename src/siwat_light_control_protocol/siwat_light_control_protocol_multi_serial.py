@@ -1,7 +1,7 @@
 from time import sleep
 import serial
 from threading import Thread
-from siwat_light_control_protocol import siwat_light_control_protocol
+from siwat_light_control_protocol.siwat_light_control_protocol import siwat_light_control_protocol
 class siwat_light_control_protocol_multi_serial(siwat_light_control_protocol):
     def __init__(self, serial_ports: list,led_map: list, baudrate: int = 115200, read_serial: bool = False, flow_control: bool = False) -> None:
         self.led_map = led_map
