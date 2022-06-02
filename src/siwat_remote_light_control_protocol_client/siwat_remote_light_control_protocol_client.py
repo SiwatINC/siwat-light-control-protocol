@@ -3,7 +3,7 @@ from time import sleep
 import paho.mqtt.client as mqtt
 import threading
 
-# TODO Input Validation
+# TODO Input Validation of r,g,b
 
 
 class siwat_remote_light_control_protocol_client:
@@ -50,16 +50,10 @@ class siwat_remote_light_control_protocol_client:
     def enter_programming_mode(self):
         self.send_command("state", "on")
         self.send_command("effect", "Program")
-
-    def fill_black(self):
-        # TODO Make this function utilize fill_with_color(r,g,b)
-        new_color = []
-        for i in range(self.num_leds):
-            new_color.append([0, 0, 0])
-        self.new_color = new_color
+        self.turn_off()
 
     def turn_off(self):
-        self.fill_black()
+        self.fill_with_color(0,0,0)
         command_array = []
         for i in range(self.num_leds):
             command_array.append([i, self.new_color[i]])
@@ -75,12 +69,17 @@ class siwat_remote_light_control_protocol_client:
         self.send_command("program", json.dumps(command_array))
 
     def set_led_at(self, index: int, r: int, g: int, b: int):
+        #TODO Input Validation, 0<=r,g,b<=255
         self.new_color[index] = [r, g, b]
 
     def fill_with_color(self, r: int, g: int, b: int):
-        # TODO Implement Function
-        pass
+        new_color = []
+        for i in range(self.num_leds):
+            new_color.append([r, g, b])
+        self.new_color = new_color
 
     def fill_segment_with_color(self, segment_start: int, segment_stop: int, r: int, g: int, b: int):
-        # TODO Implement Function
+        # TODO Input Validation, 0<index<num_leds
+        for index in range(segment_start,segment_stop+1):
+            self.set_led_at(index,r,g,b)
         pass

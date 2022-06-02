@@ -1,6 +1,7 @@
 from time import sleep
 import serial
 from threading import Thread
+
 class siwat_light_control_protocol:
     def __init__(self, serial_port: serial.Serial,led_map: list, baudrate: int = 115200, read_serial: bool = False, flow_control: bool = False) -> None:
         self.led_map = led_map
@@ -73,6 +74,10 @@ class siwat_light_control_protocol:
         for i in range(sum(self.led_map)):
             self.set_led_at(i,r,g,b)
         self.show()
+    def fill_segment_with_color(self, segment_start: int, segment_stop: int, r: int, g: int, b: int):
+        # TODO Input Validation, 0<index<num_leds
+        for index in range(segment_start,segment_stop+1):
+            self.set_led_at(index,r,g,b)
 class LEDOutOfBoundError(Exception):
     """The Specified LED Number is too large"""
     pass
