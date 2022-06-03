@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='siwat_light_control_protocol',
-    version='2.3',
+    version='2.4',
     license='Apache 2.0',
     author="Siwat Sirichai",
     author_email='siwat@siwatinc.com',
@@ -18,7 +18,8 @@ setup(
     keywords='light mqtt serial raspberry-pi-pico',
     install_requires=[
           'pyserial',
-          'paho-mqtt'
+          'paho-mqtt',
+          'wheel'
       ],
 
 )
