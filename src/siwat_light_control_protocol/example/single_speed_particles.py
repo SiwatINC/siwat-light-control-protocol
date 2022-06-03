@@ -1,4 +1,4 @@
-from siwat_light_control_protocol import siwat_light_control_protocol as slcp
+from siwat_light_control_protocol.siwat_light_control_protocol import siwat_light_control_protocol as slcp
 from time import sleep as delay
 import signal
 import sys

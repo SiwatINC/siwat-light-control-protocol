@@ -1,4 +1,4 @@
-from siwat_remote_light_control_protocol_client import siwat_remote_light_control_protocol_client as srlcp
+from siwat_remote_light_control_protocol_client.siwat_remote_light_control_protocol_client import siwat_remote_light_control_protocol_client as srlcp
 from time import sleep as delay
 import signal
 import sys
