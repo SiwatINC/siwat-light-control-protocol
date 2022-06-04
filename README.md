@@ -1,6 +1,7 @@
 # Siwat's Light Control Protocol (SLCP)
  Set of Python Libraries to interact with LED Controller that uses Siwat's Light Control Protocol and Siwat's Remote Light Control Protocol
  
+ ![](slcp_protocol.png)
 
 ## **SLCP Client Types**
 
