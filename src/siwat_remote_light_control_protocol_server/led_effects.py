@@ -15,9 +15,9 @@ class effect:
       self.num_leds = sum(led.led_map)
       self.frame_time = frame_time
       self.brightness = brightness
+      self.initialize(**kwargs)
       self.updater_thread = threading.Thread(target=self.frame_updater)
       self.updater_thread.start()
-      self.initialize(**kwargs)
 
     def initialize(self, **kwargs):
       "Initialize Function, override if neccessary"
@@ -56,7 +56,6 @@ class rainbow(effect):
     self.timecounter = 0
     
   def draw_frame(self):
-    print(self.timecounter)
     for j in range(0, self.num_leds):
         r, g, b = colorsys.hsv_to_rgb(
             ((-self.timecounter*self.velocity+j*4) % 360)/360, 1, 1)
