@@ -76,6 +76,7 @@ class siwat_light_control_protocol_multi_serial(siwat_light_control_protocol):
     def fill_led_with_color(self, r: int, g: int, b: int):
         for i in range(sum(self.led_map)):
             self.set_led_at(i,r,g,b)
+        self.show()
     def fill_segment_with_color(self, segment_start: int, segment_stop: int, r: int, g: int, b: int):
         # TODO Input Validation, 0<index<num_leds
         for index in range(segment_start,segment_stop+1):
