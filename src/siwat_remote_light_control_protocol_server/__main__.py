@@ -76,11 +76,11 @@ def report_state():
     global state, r, g, b, brightness, effect, effector, led, effects_list
     mqttclient.publish(MQTT_BASE_TOPIC+"/report/state",
                        "on" if state else "off")
-    mqttclient.publish(MQTT_BASE_TOPIC+"/report/color", str(r)+","+str(g)+","+str(b))
+    mqttclient.publish(MQTT_BASE_TOPIC+"/report/color", str(int(r))+","+str(int(g))+","+str(int(b)))
     mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
                        led_effects.effects[effect]['name'])
     mqttclient.publish(MQTT_BASE_TOPIC+"/report/effectlist", json.dumps(effects_list))
-    mqttclient.publish(MQTT_BASE_TOPIC+"/report/brightness", brightness)
+    mqttclient.publish(MQTT_BASE_TOPIC+"/report/brightness", int(brightness))
     mqttclient.publish(MQTT_BASE_TOPIC+"/report/num_leds", num_leds)
 
 
