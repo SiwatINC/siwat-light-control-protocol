@@ -54,7 +54,7 @@ class rainbow(effect):
     else:
       self.segment_size = 1
     self.timecounter = 0
-    
+
   def draw_frame(self):
     for j in range(0, self.num_leds):
         r, g, b = colorsys.hsv_to_rgb(
