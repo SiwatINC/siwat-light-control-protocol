@@ -108,7 +108,8 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
                 elif effect >= 2:
                     effector = led_effects.effects[effect]['class'](
                         frame_time=0.1, led=led, brightness=brightness)
-        report_state()
+        mqttclient.publish(MQTT_BASE_TOPIC+"/report/state",
+                       "on" if state else "off")
     elif topic == MQTT_BASE_TOPIC+"/control/brightness":
         if effect != 1:
             try:
@@ -118,7 +119,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
                         r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
                 elif effect != 1 and effector != None:
                     effector.brightness = brightness
-                report_state()
+                mqttclient.publish(MQTT_BASE_TOPIC+"/report/brightness", int(brightness))
             except ValueError:
                 return
     elif topic == MQTT_BASE_TOPIC+"/control/color":
@@ -133,7 +134,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
             b = float(btmp)
             led.fill_led_with_color(
                 r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
-            report_state()
+            mqttclient.publish(MQTT_BASE_TOPIC+"/report/color", str(int(r))+","+str(int(g))+","+str(int(b)))
         except ValueError:
             print("Invalid Payload")
             return
@@ -147,7 +148,8 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
                 if effect >= 2 and state:
                     effector = led_effects.effects[i]['class'](
                         frame_time=0.1, led=led, brightness=brightness)
-        report_state()
+        mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
+                       led_effects.effects[effect]['name'])
     elif topic == MQTT_BASE_TOPIC+"/control/exit":
         sys.exit(0)
     #TODO Input Validation, 0<=data[0]<=num_leds
