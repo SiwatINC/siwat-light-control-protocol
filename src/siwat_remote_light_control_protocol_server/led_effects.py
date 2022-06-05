@@ -55,14 +55,14 @@ class rainbow(effect):
       self.segment_size = 1
     self.timecounter = 0
     
-    def draw_frame(self):
-      print(self.timecounter)
-      for j in range(0, self.num_leds):
-          r, g, b = colorsys.hsv_to_rgb(
-              ((-self.timecounter*self.velocity+j*4) % 360)/360, 1, 1)
-          self.led.set_led_at(j, r=int(r*self.brightness), g=int(g*self.brightness), b=int(b*self.brightness))
-      self.timecounter += 1
-      self.led.show()
+  def draw_frame(self):
+    print(self.timecounter)
+    for j in range(0, self.num_leds):
+        r, g, b = colorsys.hsv_to_rgb(
+            ((-self.timecounter*self.velocity+j*4) % 360)/360, 1, 1)
+        self.led.set_led_at(j, r=int(r*self.brightness), g=int(g*self.brightness), b=int(b*self.brightness))
+    self.timecounter += 1
+    self.led.show()
 
 class random(effect):
   # Put a new random color on every LEDs
