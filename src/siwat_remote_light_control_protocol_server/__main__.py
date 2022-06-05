@@ -92,25 +92,24 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
     topic = msg.topic
     payload = msg.payload.decode("UTF-8")
     if topic == MQTT_BASE_TOPIC+"/control/state":
-        if effect != 1:
-            if payload == "off":
-                if effector != None:
-                    effector.stop_effect()
-                    effect = 0
-                    effector = None
-                    mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
-                       led_effects.effects[effect]['name'])
-                led.turn_off()
-                state = 0
-            elif payload == "on":
-                if state != 1:
-                    state = 1
-                    if effect == 0:
-                        led.fill_led_with_color(
-                            r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
-                    elif effect >= 2:
-                        effector = led_effects.effects[effect]['class'](
-                            frame_time=0.1, led=led, brightness=brightness)
+        if payload == "off":
+            if effector != None:
+                effector.stop_effect()
+                effect = 0
+                effector = None
+                mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
+                   led_effects.effects[effect]['name'])
+            led.turn_off()
+            state = 0
+        elif payload == "on" and effect != 1:
+            if state != 1:
+                state = 1
+                if effect == 0:
+                    led.fill_led_with_color(
+                        r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
+                elif effect >= 2:
+                    effector = led_effects.effects[effect]['class'](
+                        frame_time=0.1, led=led, brightness=brightness)
         mqttclient.publish(MQTT_BASE_TOPIC+"/report/state",
                        "on" if state else "off")
     elif topic == MQTT_BASE_TOPIC+"/control/brightness":
