@@ -58,7 +58,7 @@ The Serial remote client works on top of the MQTT protocol, by using JSON packet
 ## **SLCP Server**
 SLCP Server expose the control interface of the controller to MQTT. The sever can be started by executing
 
-    python -m siwat_remote_light_control_server
+    python -m siwat_remote_light_control_protocol_server
 This must be done in a directory with ***config.json*** in it.
 ***config.json*** is a configuration file with the following structure
 
