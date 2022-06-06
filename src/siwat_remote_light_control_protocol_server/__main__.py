@@ -57,12 +57,16 @@ def keep_alive():
             sys.exit(16)
         sleep(15)
 
-while not mqttclient.is_connected():
+for i in range(5):
+    if mqttclient.is_connected():
+        break
     print("connecting to mqtt. . .")
     mqttclient.connect(MQTT_SERVER,1883, 60)
     mqttclient.loop()
     sleep(5)
-
+if not mqttclient.is_connected():
+    print("Could not connect tro MQTT server!, Exiting . . .")
+    sys.exit(23)
 print("mqtt connected!")
 
 print("subscribing to topics")
