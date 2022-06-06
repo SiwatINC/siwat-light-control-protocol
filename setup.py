@@ -19,7 +19,9 @@ setup(
     install_requires=[
           'pyserial',
           'paho-mqtt',
-          'wheel'
+          'wheel',
+          'numpy',
+          'scipy'
       ],
 
 )

@@ -113,7 +113,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
                         r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
                 elif effect >= 2:
                     effector = led_effects.effects[effect]['class'](
-                        frame_time=0.1, led=led, brightness=brightness)
+                        frame_time=0.1, led=led, brightness=brightness, r=r, g=g, b=b)
         mqttclient.publish(MQTT_BASE_TOPIC+"/report/state",
                        "on" if state else "off")
     elif topic == MQTT_BASE_TOPIC+"/control/brightness":
@@ -161,7 +161,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
                     led.turn_off()
                 elif effect >= 2 and state:
                     effector = led_effects.effects[i]['class'](
-                        frame_time=0.1, led=led, brightness=brightness)
+                        frame_time=0.1, led=led, brightness=brightness, r=r, g=g, b=b)
         mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
                        led_effects.effects[effect]['name'])
     elif topic == MQTT_BASE_TOPIC+"/control/exit":

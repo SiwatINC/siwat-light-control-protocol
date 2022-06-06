@@ -2,20 +2,26 @@ from multiprocessing.dummy import active_children
 import threading
 from time import sleep
 from siwat_light_control_protocol.siwat_light_control_protocol_multi_serial import siwat_light_control_protocol_multi_serial
+from time import perf_counter as ticks
 import colorsys
-
+import numpy
 
 class effect:
 
     active: bool = True
 
-    def __init__(self, frame_time: float, led: siwat_light_control_protocol_multi_serial, brightness: float, **kwargs):
+    def __init__(self, frame_time: float, led: siwat_light_control_protocol_multi_serial, brightness: float,
+                    r: float, g: float, b: float, **kwargs):
       "Will run at Initialization, do not override"
       self.led = led
       self.num_leds = sum(led.led_map)
       self.frame_time = frame_time
       self.brightness = brightness
       self.initialize(**kwargs)
+      self.r = r
+      self.g = g
+      self.b = b
+
       self.updater_thread = threading.Thread(target=self.frame_updater)
       self.updater_thread.start()
 
@@ -66,38 +72,80 @@ class rainbow(effect):
 class random(effect):
   # Put a new random color on every LEDs
   def initialize(self, **kwargs):
-    # TODO Implement This Function
-    pass
+    self.color = [[255,0,0],[255,127,0],[255,255,0],
+        [127,255,0],[0,255,0],[0,255,127],
+        [0,255,255],[0,127,255],[0,0,255],
+        [127,0,255],[255,0,255],[255,0,127]]
+    self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
+    
   def draw_frame(self):
-    # TODO Implement This Function
-    pass
+    self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
+    for i in range(0,self.num_leds):
+        self.leds.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]),g=int(self.brightness*self.color[self.array[i]][1]),b=int(self.brightness*self.color[self.array[i]][2]))
+    self.leds.show()
+    
 
-class breathing(effect):
+class breathing_random(effect):
   # Slowly fade in and out with random color repeatedly
   def initialize(self, **kwargs):
-    # TODO Implement This Function
-    pass
+    self.color = [[255,0,0],[255,127,0],[255,255,0],
+        [127,255,0],[0,255,0],[0,255,127],
+        [0,255,255],[0,127,255],[0,0,255],
+        [127,0,255],[255,0,255],[255,0,127]]
+    self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
+    self.init_tick = ticks()
   def draw_frame(self):
-    # TODO Implement This Function
-    pass
+    time = ticks()-self.init_tick
+    time *= 1000
+    self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
+    val = numpy.heaviside(time,1)*numpy.sin(time)
+    for i in range(0,self.num_leds):
+      self.leds.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]*val),g=int(self.brightness*self.color[self.array[i]][1]*val),b=int(self.brightness*self.color[self.array[i]][2]*val))
+    self.leds.show()
+
+class breathing(effect):
+      # Slowly fade in and out with current colour
+  def initialize(self, **kwargs):
+    self.init_tick = ticks()
+  def draw_frame(self):
+    time = ticks()-self.init_tick
+    time *= 1000
+    val = numpy.heaviside(time,1)*numpy.sin(time)
+    for i in range(0,self.num_leds):
+      self.leds.set_led_at(i,r=int(self.brightness*self.r*val),g=int(self.brightness*self.g*val),b=int(self.brightness*self.b*val))
+    self.leds.show()
 
 class police(effect):
   # Strobe Red and Blue
   def initialize(self, **kwargs):
-    # TODO Implement This Function
-    pass
+    self.init_tick = ticks()
   def draw_frame(self):
-    # TODO Implement This Function
-    pass
+    time = ticks()-self.init_tick
+    time *= 1000
+    time = time%1000
+    if(time<500):
+      for i in range(0,self.num_leds):
+        self.leds.set_led_at(i,r=int(self.brightness*1),g=0,b=0)
+    else:
+      for i in range(0,self.num_leds):
+        self.leds.set_led_at(i,r=0,g=0,b=int(self.brightness*1))
+    self.leds.show()
 
 class starlight(effect):
   #Pop up a random color at random position then fade away
   def initialize(self, **kwargs):
     # TODO Implement This Function
-    pass
+    self.color = [[255,0,0],[255,127,0],[255,255,0],
+        [127,255,0],[0,255,0],[0,255,127],
+        [0,255,255],[0,127,255],[0,0,255],
+        [127,0,255],[255,0,255],[255,0,127]]
+    self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
   def draw_frame(self):
     # TODO Implement This Function
-    pass
+    self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
+    for i in range(0,self.num_leds):
+        self.leds.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]),g=int(self.brightness*self.color[self.array[i]][1]),b=int(self.brightness*self.color[self.array[i]][2]))
+    self.leds.show()
 
 
 effects = [
