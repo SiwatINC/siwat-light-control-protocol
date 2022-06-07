@@ -1,3 +1,5 @@
 pyserial
 paho-mqtt
 wheel
+numpy
+scipy
