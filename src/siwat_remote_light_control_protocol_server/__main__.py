@@ -130,19 +130,14 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
         mqttclient.publish(MQTT_BASE_TOPIC+"/report/brightness", int(brightness))
     elif topic == MQTT_BASE_TOPIC+"/control/color":
         if effect != 1:
-            if effector != None:
-                effector.stop_effect()
-                effector = None
-                effect = 0
-                mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
-                        led_effects.effects[effect]['name'])
             try:
                 [rtmp,gtmp,btmp] = payload.split(',')
                 r = float(rtmp)
                 g = float(gtmp)
                 b = float(btmp)
-                led.fill_led_with_color(
-                    r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
+                if effect == 0:
+                    led.fill_led_with_color(
+                        r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
             except ValueError:
                 print("Invalid Payload")
                 return
