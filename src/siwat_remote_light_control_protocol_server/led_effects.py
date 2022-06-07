@@ -81,7 +81,7 @@ class random(effect):
   def draw_frame(self):
     self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
     for i in range(0,self.num_leds):
-        self.led.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]),g=int(self.brightness*self.color[self.array[i]][1]),b=int(self.brightness*self.color[self.array[i]][2]))
+        self.led.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]/255.0),g=int(self.brightness*self.color[self.array[i]][1]/255.0),b=int(self.brightness*self.color[self.array[i]][2]/255.0))
     self.led.show()
     
 
@@ -100,7 +100,7 @@ class breathing_random(effect):
     self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
     val = numpy.heaviside(time,1)*numpy.sin(time)
     for i in range(0,self.num_leds):
-      self.led.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]*val),g=int(self.brightness*self.color[self.array[i]][1]*val),b=int(self.brightness*self.color[self.array[i]][2]*val))
+      self.led.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]*val/255.0),g=int(self.brightness*self.color[self.array[i]][1]*val/255.0),b=int(self.brightness*self.color[self.array[i]][2]*val/255.0))
     self.led.show()
 
 class breathing(effect):
@@ -112,7 +112,7 @@ class breathing(effect):
     time *= 1000
     val = numpy.heaviside(time,1)*numpy.sin(time)
     for i in range(0,self.num_leds):
-      self.led.set_led_at(i,r=int(self.brightness*self.r*val),g=int(self.brightness*self.g*val),b=int(self.brightness*self.b*val))
+      self.led.set_led_at(i,r=int(self.brightness*self.r*val/255.0),g=int(self.brightness*self.g*val/255.0),b=int(self.brightness*self.b*val/255.0))
     self.led.show()
 
 class police(effect):
