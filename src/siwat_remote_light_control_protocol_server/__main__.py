@@ -178,6 +178,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
             report_state()
     except SerialException:
         print("Serial Disconnected, Exiting. . .")
+        mqttclient.disconnect()
         sys.exit(19)
 mqttclient.on_message = handle_mqtt_messages
 

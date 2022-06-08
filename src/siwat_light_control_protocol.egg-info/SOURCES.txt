@@ -3,6 +3,7 @@ README.md
 setup.py
 src/siwat_light_control_protocol/__init__.py
 src/siwat_light_control_protocol/input_validation.py
+src/siwat_light_control_protocol/led_effects.py
 src/siwat_light_control_protocol/siwat_light_control_protocol.py
 src/siwat_light_control_protocol/siwat_light_control_protocol_multi_serial.py
 src/siwat_light_control_protocol.egg-info/PKG-INFO
@@ -14,4 +15,3 @@ src/siwat_remote_light_control_protocol_client/__init__.py
 src/siwat_remote_light_control_protocol_client/siwat_remote_light_control_protocol_client.py
 src/siwat_remote_light_control_protocol_server/__init__.py
 src/siwat_remote_light_control_protocol_server/__main__.py
-src/siwat_remote_light_control_protocol_server/led_effects.py
