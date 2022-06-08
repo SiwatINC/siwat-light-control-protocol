@@ -2,10 +2,11 @@ import sys
 from time import sleep
 from siwat_light_control_protocol.input_validation import validate_rgb
 from siwat_light_control_protocol.siwat_light_control_protocol_multi_serial import siwat_light_control_protocol_multi_serial as slcp
-import siwat_remote_light_control_protocol_server.led_effects as led_effects
+import siwat_light_control_protocol.led_effects as led_effects
 import threading
 import json
 import paho.mqtt.client as mqtt
+from serial.serialutil import SerialException
 
 # Load Configuration
 config = json.load(open("config.json"))
@@ -91,92 +92,93 @@ def report_state():
 
 
 def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
-    #TODO Input Validation, 0<=(r,g,b)<=255
-    #TODO Input Validation, Handle all unexpected input
-    #TODO Input Validation, Handle String in Integer/Float Field
-    global state, r, g, b, brightness, effect, effector, led, effects_list
-    topic = msg.topic
-    payload = msg.payload.decode("UTF-8")
-    if topic == MQTT_BASE_TOPIC+"/control/state":
-        if payload == "off":
+    try:
+        global state, r, g, b, brightness, effect, effector, led, effects_list
+        topic = msg.topic
+        payload = msg.payload.decode("UTF-8")
+        if topic == MQTT_BASE_TOPIC+"/control/state":
+            if payload == "off":
+                if effector != None:
+                    effector.stop_effect()
+                    effect = 0
+                    effector = None
+                    mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
+                    led_effects.effects[effect]['name'])
+                led.turn_off()
+                state = 0
+            elif payload == "on" and effect != 1:
+                if state != 1:
+                    state = 1
+                    if effect == 0:
+                        led.fill_led_with_color(
+                            r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
+                    elif effect >= 2:
+                        effector = led_effects.effects[effect]['class'](
+                            frame_time=FRAME_TIME, led=led, brightness=brightness, r=r, g=g, b=b)
+            mqttclient.publish(MQTT_BASE_TOPIC+"/report/state",
+                        "on" if state else "off")
+        elif topic == MQTT_BASE_TOPIC+"/control/brightness":
+            if effect != 1:
+                try:
+                    brightness = float(payload)
+                    if brightness > 255 or brightness<0: 
+                        return
+                    if effect == 0:
+                        led.fill_led_with_color(
+                            r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
+                    elif effect != 1 and effector != None:
+                        effector.brightness = brightness
+                except ValueError:
+                    return
+            mqttclient.publish(MQTT_BASE_TOPIC+"/report/brightness", int(brightness))
+        elif topic == MQTT_BASE_TOPIC+"/control/color":
+            if effect != 1:
+                try:
+                    [rtmp,gtmp,btmp] = payload.split(',')
+                    [r,g,b] = validate_rgb(int(float(rtmp)),int(float(gtmp)),int(float(btmp)))
+                    if effect >= 2:
+                        effector.r = r
+                        effector.g = g
+                        effector.b = b
+                    if r<0 or r>255 or g<0 or g>255 or b<0 or b>255:
+                        return
+                    if effect == 0:
+                        led.fill_led_with_color(
+                            r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
+                except ValueError:
+                    print("Invalid Payload")
+                    return
+            mqttclient.publish(MQTT_BASE_TOPIC+"/report/color", str(int(r))+","+str(int(g))+","+str(int(b)))
+        elif topic == MQTT_BASE_TOPIC+"/control/effect":
             if effector != None:
                 effector.stop_effect()
-                effect = 0
                 effector = None
-                mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
-                   led_effects.effects[effect]['name'])
-            led.turn_off()
-            state = 0
-        elif payload == "on" and effect != 1:
-            if state != 1:
-                state = 1
-                if effect == 0:
-                    led.fill_led_with_color(
-                        r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
-                elif effect >= 2:
-                    effector = led_effects.effects[effect]['class'](
-                        frame_time=FRAME_TIME, led=led, brightness=brightness, r=r, g=g, b=b)
-        mqttclient.publish(MQTT_BASE_TOPIC+"/report/state",
-                       "on" if state else "off")
-    elif topic == MQTT_BASE_TOPIC+"/control/brightness":
-        if effect != 1:
-            try:
-                brightness = float(payload)
-                if brightness > 255 or brightness<0: 
-                    return
-                if effect == 0:
-                    led.fill_led_with_color(
-                        r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
-                elif effect != 1 and effector != None:
-                    effector.brightness = brightness
-            except ValueError:
-                return
-        mqttclient.publish(MQTT_BASE_TOPIC+"/report/brightness", int(brightness))
-    elif topic == MQTT_BASE_TOPIC+"/control/color":
-        if effect != 1:
-            try:
-                [rtmp,gtmp,btmp] = payload.split(',')
-                [r,g,b] = validate_rgb(int(float(r)),int(float(g)),int(float(b)))
-                effector.r = r
-                effector.g = g
-                effector.b = b
-                if r<0 or r>255 or g<0 or g>255 or b<0 or b>255:
-                    return
-                if effect == 0:
-                    led.fill_led_with_color(
-                        r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
-            except ValueError:
-                print("Invalid Payload")
-                return
-        mqttclient.publish(MQTT_BASE_TOPIC+"/report/color", str(int(r))+","+str(int(g))+","+str(int(b)))
-    elif topic == MQTT_BASE_TOPIC+"/control/effect":
-        if effector != None:
-            effector.stop_effect()
-            effector = None
-        for i in range(len(led_effects.effects)):
-            if led_effects.effects[i]['name'] == payload:
-                effect = i
-                if effect == 0:
-                    led.fill_led_with_color(
-                        r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
-                elif effect == 1:
-                    led.turn_off()
-                elif effect >= 2 and state:
-                    effector = led_effects.effects[i]['class'](
-                        frame_time=FRAME_TIME, led=led, brightness=brightness, r=r, g=g, b=b)
-        mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
-                       led_effects.effects[effect]['name'])
-    elif topic == MQTT_BASE_TOPIC+"/control/exit":
-        sys.exit(0)
-    elif topic == MQTT_BASE_TOPIC+"/control/program":
-        if effect == 1:
-            datas = json.loads(payload)
-            for data in datas:
-                led.set_led_at(data[0],data[1][0],data[1][1],data[1][2])
-            led.show()
-    elif topic == MQTT_BASE_TOPIC+"/control/requeststate":
-        report_state()
-
+            for i in range(len(led_effects.effects)):
+                if led_effects.effects[i]['name'] == payload:
+                    effect = i
+                    if effect == 0:
+                        led.fill_led_with_color(
+                            r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
+                    elif effect == 1:
+                        led.turn_off()
+                    elif effect >= 2 and state:
+                        effector = led_effects.effects[i]['class'](
+                            frame_time=FRAME_TIME, led=led, brightness=brightness, r=r, g=g, b=b)
+            mqttclient.publish(MQTT_BASE_TOPIC+"/report/effect",
+                        led_effects.effects[effect]['name'])
+        elif topic == MQTT_BASE_TOPIC+"/control/exit":
+            sys.exit(0)
+        elif topic == MQTT_BASE_TOPIC+"/control/program":
+            if effect == 1:
+                datas = json.loads(payload)
+                for data in datas:
+                    led.set_led_at(data[0],data[1][0],data[1][1],data[1][2])
+                led.show()
+        elif topic == MQTT_BASE_TOPIC+"/control/requeststate":
+            report_state()
+    except SerialException:
+        print("Serial Disconnected, Exiting. . .")
+        sys.exit(19)
 mqttclient.on_message = handle_mqtt_messages
 
 report_state()
