@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='siwat_light_control_protocol',
-    version='3.1',
+    version='3.2',
     license='Apache 2.0',
     author="Siwat Sirichai",
     author_email='siwat@siwatinc.com',

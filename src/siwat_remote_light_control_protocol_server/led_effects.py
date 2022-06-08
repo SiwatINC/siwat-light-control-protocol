@@ -109,7 +109,6 @@ class breathing(effect):
     self.init_tick = ticks()
   def draw_frame(self):
     time = ticks()-self.init_tick
-    time /= 1000
     val = numpy.sin(time)
     val = numpy.heaviside(val,1)*val
     for i in range(0,self.num_leds):
