@@ -4,7 +4,7 @@
     "MQTT_USERNAME": "",
     "MQTT_PASSWORD": "",
     "MQTT_BASE_TOPIC": "/ledstrip/fixture1",
-    "FRAME_TIME": 100.0,
+    "FRAME_TIME": 0.05,
     "SERIAL_PORTS_MAP": [
         "COM1"
     ],

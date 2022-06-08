@@ -63,7 +63,7 @@ class rainbow(effect):
   def draw_frame(self):
     for j in range(0, self.num_leds):
         r, g, b = colorsys.hsv_to_rgb(
-            ((-ticks()/750*self.velocity+j*4) % 360)/360, 1, 1)
+            ((-ticks()*10*self.velocity+j*4) % 360)/360, 1, 1)
         self.led.set_led_at(j, r=int(r*self.brightness), g=int(g*self.brightness), b=int(b*self.brightness))
     self.led.show()
 
