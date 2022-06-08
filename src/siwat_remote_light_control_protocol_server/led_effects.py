@@ -59,14 +59,12 @@ class rainbow(effect):
       self.segment_size: int = kwargs['segment_size']
     else:
       self.segment_size = 1
-    self.timecounter = 0
 
   def draw_frame(self):
     for j in range(0, self.num_leds):
         r, g, b = colorsys.hsv_to_rgb(
-            ((-self.timecounter*self.velocity+j*4) % 360)/360, 1, 1)
+            ((-ticks()/750*self.velocity+j*4) % 360)/360, 1, 1)
         self.led.set_led_at(j, r=int(r*self.brightness), g=int(g*self.brightness), b=int(b*self.brightness))
-    self.timecounter += 1
     self.led.show()
 
 class random(effect):
@@ -77,6 +75,7 @@ class random(effect):
         [0,255,255],[0,127,255],[0,0,255],
         [127,0,255],[255,0,255],[255,0,127]]
     self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
+    self.frame_time = 0.2
     
   def draw_frame(self):
     self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
@@ -96,9 +95,9 @@ class breathing_random(effect):
     self.init_tick = ticks()
   def draw_frame(self):
     time = ticks()-self.init_tick
-    time *= 1000
     self.array = numpy.random.randint(low=0,high=9,size=self.num_leds)
-    val = numpy.heaviside(time,1)*numpy.sin(time)
+    val = numpy.sin(time)
+    val = numpy.heaviside(val,1)*val
     for i in range(0,self.num_leds):
       self.led.set_led_at(i,r=int(self.brightness*self.color[self.array[i]][0]*val/255.0),g=int(self.brightness*self.color[self.array[i]][1]*val/255.0),b=int(self.brightness*self.color[self.array[i]][2]*val/255.0))
     self.led.show()
@@ -170,10 +169,11 @@ effects = [
     "class": breathing
   },
   {
+    "name": "BreathingRandom",
+    "class": breathing_random
+  },
+  {
     "name": "Police",
     "class": police
   },
-  {
-    "name": "Starlight",
-    "class": starlight
-  }]
+  ]
