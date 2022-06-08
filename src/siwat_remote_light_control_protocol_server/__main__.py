@@ -1,5 +1,6 @@
 import sys
 from time import sleep
+from siwat_light_control_protocol.input_validation import validate_rgb
 from siwat_light_control_protocol.siwat_light_control_protocol_multi_serial import siwat_light_control_protocol_multi_serial as slcp
 import siwat_remote_light_control_protocol_server.led_effects as led_effects
 import threading
@@ -135,9 +136,10 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
         if effect != 1:
             try:
                 [rtmp,gtmp,btmp] = payload.split(',')
-                r = float(rtmp)
-                g = float(gtmp)
-                b = float(btmp)
+                [r,g,b] = validate_rgb(int(float(r)),int(float(g)),int(float(b)))
+                effector.r = r
+                effector.g = g
+                effector.b = b
                 if r<0 or r>255 or g<0 or g>255 or b<0 or b>255:
                     return
                 if effect == 0:
