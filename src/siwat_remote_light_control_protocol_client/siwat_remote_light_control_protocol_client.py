@@ -1,15 +1,15 @@
 import json
+from re import S
 from time import sleep
 import paho.mqtt.client as mqtt
 import threading
-
-# TODO Input Validation of r,g,b
-
+from siwat_light_control_protocol.input_validation import LEDOutOfBoundError, validate_rgb, index_is_valid, range_is_valid
 
 class siwat_remote_light_control_protocol_client:
     mqttclient: mqtt.Client = mqtt.Client()
     current_color: list = []
     new_color: list
+    num_leds: int = None
 
     def __init__(self, mqtt_server: str, mqtt_port: str, light_address: str, mqtt_use_auth: bool = False, mqtt_username: str = None, mqtt_password: str = None):
         # Setup MQTT
@@ -36,7 +36,8 @@ class siwat_remote_light_control_protocol_client:
         sleep(1)
         self.turn_off()
         sleep(1)
-        # TODO if num_leds are not filled at this point, assume that the strip is offline, throw an exception.
+        if self.num_leds == None:
+            raise ConnectionTimeoutException
 
     def handle_mqtt_messages(self, client, userdata, msg: mqtt.MQTTMessage):
         topic = msg.topic
@@ -53,7 +54,7 @@ class siwat_remote_light_control_protocol_client:
         self.turn_off()
 
     def turn_off(self):
-        self.fill_with_color(0,0,0)
+        self.fill_with_color(0, 0, 0)
         command_array = []
         for i in range(self.num_leds):
             command_array.append([i, self.new_color[i]])
@@ -69,16 +70,27 @@ class siwat_remote_light_control_protocol_client:
         self.send_command("program", json.dumps(command_array))
 
     def set_led_at(self, index: int, r: int, g: int, b: int):
-        #TODO Input Validation, 0<=r,g,b<=255
+        [r,g,b] = validate_rgb(r,g,b)
+        if not index_is_valid(index,self.num_leds):
+            raise LEDOutOfBoundError
         self.new_color[index] = [r, g, b]
 
     def fill_with_color(self, r: int, g: int, b: int):
+        [r,g,b] = validate_rgb(r,g,b)
         new_color = []
         for i in range(self.num_leds):
             new_color.append([r, g, b])
         self.new_color = new_color
 
     def fill_segment_with_color(self, segment_start: int, segment_stop: int, r: int, g: int, b: int):
-        # TODO Input Validation, 0<index<num_leds
-        for index in range(segment_start,segment_stop+1):
-            self.set_led_at(index,r,g,b)
+        [r,g,b] = validate_rgb(r,g,b)
+        if not range_is_valid(segment_start,segment_stop,self.num_leds):
+            return
+
+        for index in range(segment_start, segment_stop+1):
+            self.set_led_at(index, r, g, b)
+
+
+class ConnectionTimeoutException(Exception):
+    """The LED server does not response to requests!"""
+    pass

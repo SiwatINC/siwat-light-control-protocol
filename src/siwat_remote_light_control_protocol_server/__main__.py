@@ -120,6 +120,8 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
         if effect != 1:
             try:
                 brightness = float(payload)
+                if brightness > 255 or brightness<0: 
+                    return
                 if effect == 0:
                     led.fill_led_with_color(
                         r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
@@ -135,6 +137,8 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
                 r = float(rtmp)
                 g = float(gtmp)
                 b = float(btmp)
+                if r<0 or r>255 or g<0 or g>255 or b<0 or b>255:
+                    return
                 if effect == 0:
                     led.fill_led_with_color(
                         r*brightness/255.0, g*brightness/255.0, b*brightness/255.0)
