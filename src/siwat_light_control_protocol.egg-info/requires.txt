@@ -1,5 +1,5 @@
-pyserial
-paho-mqtt
-wheel
 numpy
+paho-mqtt
+pyserial
 scipy
+wheel

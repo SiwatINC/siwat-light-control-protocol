@@ -5,6 +5,7 @@ from siwat_light_control_protocol.input_validation import validate_rgb
 from siwat_light_control_protocol.siwat_light_control_protocol_multi_serial import siwat_light_control_protocol_multi_serial as slcp
 import siwat_light_control_protocol.led_effects as led_effects
 import threading
+import signal
 import json
 import paho.mqtt.client as mqtt
 from serial.serialutil import SerialException
@@ -180,10 +181,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
     except SerialException:
         print("Serial Disconnected, Exiting. . .")
         mqttclient.disconnect()
-        if os.name == 'posix':
-            os.kill(os.getpid(), signal.SIGINT)
-        else:
-            os._exit()
+        os._exit(17)
 mqttclient.on_message = handle_mqtt_messages
 
 report_state()
