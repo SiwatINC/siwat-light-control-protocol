@@ -185,7 +185,7 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
 
 def handle_disconnect(client, userdata, rc):
     print("MQTT Connection Error, exiting . . .")
-    sys.exit(73)
+    os._exit(73)
 
 mqttclient.on_message = handle_mqtt_messages
 mqttclient.on_message = handle_mqtt_messages
