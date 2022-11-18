@@ -1,13 +1,11 @@
 Metadata-Version: 2.1
 Name: siwat-light-control-protocol
-Version: 3.15
-Summary: UNKNOWN
+Version: 3.16
 Home-page: https://github.com/SiwatINC/siwat-light-control-protocol
 Author: Siwat Sirichai
 Author-email: siwat@siwatinc.com
 License: Apache 2.0
 Keywords: light mqtt serial raspberry-pi-pico
-Platform: UNKNOWN
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
@@ -124,5 +122,3 @@ The payload that set the light at index 0,1,2 to red,green,blue respectively is 
         [1,[0,255,0]]
         [2,[0,0,255]]
     ]
-
-

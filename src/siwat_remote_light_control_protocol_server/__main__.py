@@ -182,7 +182,16 @@ def handle_mqtt_messages(client, userdata, msg: mqtt.MQTTMessage):
         print("Serial Disconnected, Exiting. . .")
         mqttclient.disconnect()
         os._exit(17)
+
+def handle_disconnect(client, userdata, rc):
+    print("MQTT Connection Error, exiting . . .")
+    sys.exit(73)
+
 mqttclient.on_message = handle_mqtt_messages
+mqttclient.on_message = handle_mqtt_messages
+mqttclient.on_disconnect = handle_disconnect
+mqttclient.on_connect_fail = handle_disconnect
+mqttclient.on_socket_close = handle_disconnect
 
 report_state()
 
