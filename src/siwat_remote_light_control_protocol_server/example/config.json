@@ -5,6 +5,7 @@
     "MQTT_PASSWORD": "",
     "MQTT_BASE_TOPIC": "/ledstrip/fixture1",
     "FRAME_TIME": 0.05,
+    "MAXIMUM_BRIGHTNESS": 255,
     "SERIAL_PORTS_MAP": [
         "COM1"
     ],
